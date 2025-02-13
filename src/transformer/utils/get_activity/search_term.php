@@ -37,7 +37,7 @@ use src\transformer\utils as utils;
  */
 function search_term(array $config, string $lang, \stdClass $course, string $term): array {
 
-    $url = $config['app_url'] . 'mod/forum/search.php?id=' . $course->id . '&search=' . $term;
+    $url = $config['app_url'] . '/mod/forum/search.php?id=' . $course->id . '&search=' . $term;
 
     $object = [
         'id' => $url,

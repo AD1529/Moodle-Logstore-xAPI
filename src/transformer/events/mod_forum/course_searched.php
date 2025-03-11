@@ -76,7 +76,6 @@ function course_searched(array $config, \stdClass $event): array {
                 'grouping' => [
                     utils\get_activity\site($config),
                     utils\get_activity\course($config, $course),
-                    utils\get_activity\course_forum($config, $course, $event->contextinstanceid),
                 ],
                 'category' => [
                     utils\get_activity\source($config),

@@ -63,12 +63,10 @@ function attempt_started(array $config, \stdClass $event) {
             'language' => $lang,
             'extensions' => utils\extensions\base($config, $event, $course),
             'contextActivities' => [
-                'other' => [
-                    utils\get_activity\course_quiz($config, $course, $cmid),
-                ],
                 'grouping' => [
                     utils\get_activity\site($config),
                     utils\get_activity\course($config, $course),
+                    utils\get_activity\course_quiz($config, $course, $cmid),
                 ],
                 'category' => [
                     utils\get_activity\source($config),

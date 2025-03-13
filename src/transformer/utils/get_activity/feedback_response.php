@@ -50,7 +50,7 @@ function feedback_response(array $config, int $responseid, int $cmid, int $anony
         $coursemodule = $repo->read_record_by_id('course_modules', $cmid);
         $status = $coursemodule->deletioninprogress;
         if ($status == 0) {
-            $description = 'the attempt of the quiz';
+            $description = 'the attempt of the feedback';
         } else {
             $description = 'deletion in progress';
         }

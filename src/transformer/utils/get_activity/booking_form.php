@@ -52,7 +52,7 @@ function booking_form(array $config, string $lang, int $cmid): array {
         $description = 'deleted';
     }
 
-    $url = $config['app_url'].'/mod/scheduler/view.php';
+    $url = $config['app_url'].'/mod/scheduler/view.php?id=' . $cmid;
 
     return [
         'id' => $url,

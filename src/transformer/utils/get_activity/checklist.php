@@ -62,7 +62,7 @@ function checklist(array $config, int $checklistid, \stdClass $user, string $lan
         $description = 'deleted';
     }
 
-    $url = $config['app_url'] . '/mod/checklist/report.php?id=' . $checklistid . '&studentid' . $userid;
+    $url = $config['app_url'] . '/mod/checklist/report.php?id=' . $checklistid . '&studentid=' . $userid;
 
     return [
         'id' => $url,

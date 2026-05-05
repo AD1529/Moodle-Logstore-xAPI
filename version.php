@@ -27,8 +27,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'logstore_xapi';
-$plugin->version = 2026022300;
-$plugin->requires = 2023100900;
-$plugin->supported = [403, 501];
+$plugin->version = 2022101804;
+$plugin->requires = 2020061500;
+$plugin->supported = [39, 400];
+//$plugin->supported = [39, 400, 401, 402, 403, 404, 405];
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = '5.0.1';
+$plugin->release = '';

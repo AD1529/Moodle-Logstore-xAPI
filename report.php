@@ -49,16 +49,15 @@ if ($id == XAPI_REPORT_ID_ERROR) {
 }
 
 // Set pagination url's parameter.
-
-$urlparams = [
+$urlparams = array(
     'id' => $id,
     'run' => $run,
     'page' => $page,
     'perpage' => $perpage,
-    'onpage' => $onpage,
-];
+    'onpage' => $onpage
+);
 
-$url = new moodle_url('/admin/tool/log/store/xapi/report.php', ['id' => $id]);
+$url = new moodle_url('/admin/tool/log/store/xapi/report.php', array('id' => $id));
 
 // Set page parameters.
 $PAGE->set_context($systemcontext);
@@ -67,7 +66,7 @@ $PAGE->set_url($url);
 // Set filter params and defaults.
 $eventnames = logstore_xapi_get_event_names_array();
 
-$defaults = [
+$defaults = array(
     'datefrom' => XAPI_REPORT_DATEFROM_DEFAULT,
     'dateto' => XAPI_REPORT_DATETO_DEFAULT,
     'eventcontext' => XAPI_REPORT_EVENTCONTEXT_DEFAULT,
@@ -76,7 +75,7 @@ $defaults = [
     'resend' => XAPI_REPORT_RESEND_FALSE,
     'response' => XAPI_REPORT_RESPONSE_DEFAULT,
     'userfullname' => XAPI_REPORT_USERNAME_DEFAULT,
-];
+);
 
 // Reread submitted params.
 if (!empty($onpage)) {
@@ -132,7 +131,7 @@ switch ($id) {
         break;
 }
 
-$notifications = [];
+$notifications = array();
 $mform = new logstore_xapi\form\tool_logstore_xapi_reportfilter_form($url, $filterparams);
 
 $params = [];
@@ -187,7 +186,7 @@ if (isset($formelements)) {
 }
 
 if ($run) {
-    [$insql, $inparams] = $DB->get_in_or_equal($eventnames, SQL_PARAMS_NAMED, 'evt');
+    list($insql, $inparams) = $DB->get_in_or_equal($eventnames, SQL_PARAMS_NAMED, 'evt');
     $where[] = "x.eventname $insql";
     $params = array_merge($params, $inparams);
 
@@ -212,15 +211,11 @@ if ($run) {
         if (!empty($eventids)) {
             $mover = new \logstore_xapi\log\moveback($eventids, $id);
             if ($mover->execute()) {
-                $notifications[] = new notification(
-                    get_string('resendevents:success', 'logstore_xapi'),
-                    notification::NOTIFY_SUCCESS
-                );
+                $notifications[] = new notification(get_string('resendevents:success', 'logstore_xapi'),
+                    notification::NOTIFY_SUCCESS);
             } else {
-                $notifications[] = new notification(
-                    get_string('resendevents:failed', 'logstore_xapi'),
-                    notification::NOTIFY_ERROR
-                );
+                $notifications[] = new notification(get_string('resendevents:failed', 'logstore_xapi'),
+                    notification::NOTIFY_ERROR);
             }
         }
     }
@@ -252,7 +247,7 @@ $mform->set_data($submitcount);
 
 if (!empty($results)) {
     $table = new html_table();
-    $table->head = [];
+    $table->head = array();
     $table->attributes['class'] = 'admintable generaltable';
     if ($id == XAPI_REPORT_ID_ERROR) {
         $table->head[] = get_string('type', 'logstore_xapi');
@@ -284,6 +279,7 @@ if (!empty($results)) {
             } else {
                 $row[] = get_string('contextidnolongerexists', 'logstore_xapi', $result->contextid);
             }
+
         }
         if ($id == XAPI_REPORT_ID_ERROR) {
             $response = '';

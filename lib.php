@@ -53,7 +53,7 @@ define('XAPI_REPORT_STARTING_PAGE', 0);
 define('XAPI_REPORT_PERPAGE_DEFAULT', 40);
 define('XAPI_REPORT_ONPAGE_DEFAULT', '');
 define('XAPI_REPORT_EVENTCONTEXT_DEFAULT', '');
-define('XAPI_REPORT_EVENTNAMES_DEFAULT', []);
+define('XAPI_REPORT_EVENTNAMES_DEFAULT', array());
 define('XAPI_REPORT_ERROTYPE_DEFAULT', '0');
 define('XAPI_REPORT_RESPONSE_DEFAULT', '0');
 define('XAPI_REPORT_USERNAME_DEFAULT', '');
@@ -67,7 +67,7 @@ define('XAPI_REPORT_DATETO_DEFAULT', 0);
  */
 function logstore_xapi_get_cohorts() {
     global $DB;
-    $array = ["visible" => 1];
+    $array = array("visible" => 1);
     $cohorts = $DB->get_records("cohort", $array);
     return $cohorts;
 }
@@ -75,31 +75,21 @@ function logstore_xapi_get_cohorts() {
 /**
  * Get the selected cohorts from the settings.
  *
- * Only returns IDs for cohorts that still exist and are visible, filtering out
- * any cohorts that have been deleted or made invisible since the selection was saved.
- *
- * @return array Returns an array of selected cohort ids.
+ * @return array Returns an array of selected cohort ids if the cohort is still visible.
+ * The cohort might have been made invisible or removed since the selection was made.
  */
 function logstore_xapi_get_selected_cohorts() {
-    global $DB;
-
+    $arrvisible = logstore_xapi_get_cohorts();
     $selected = get_config('logstore_xapi', 'cohorts');
 
-    if (empty($selected)) {
-        return [];
+    $arrselected = explode(",", $selected);
+    $arr = array();
+    foreach ($arrselected as $arrselection) {
+        if (array_key_exists($arrselection, $arrvisible)) {
+            $arr[] = $arrselection;
+        }
     }
-
-    $ids = array_filter(array_map('intval', explode(',', $selected)));
-
-    if (empty($ids)) {
-        return [];
-    }
-
-    [$insql, $inparams] = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED);
-    $inparams['visible'] = 1;
-    $records = $DB->get_records_select('cohort', "id $insql AND visible = :visible", $inparams, '', 'id');
-
-    return array_map('strval', array_keys($records));
+    return $arr;
 }
 
 /**
@@ -111,17 +101,17 @@ function logstore_xapi_get_selected_cohorts() {
 function logstore_xapi_get_cohort_members($cohortids) {
     global $DB;
 
-    $members = [];
+    $members = array();
 
     foreach ($cohortids as $cohortid) {
         // Validate params.
-        $cohort = $DB->get_record('cohort', ['id' => $cohortid], '*', MUST_EXIST);
+        $cohort = $DB->get_record('cohort', array('id' => $cohortid), '*', MUST_EXIST);
         if (!empty($cohort)) {
             $sql = "SELECT u.*
                       FROM {user} u, {cohort_members} cm
                      WHERE u.id = cm.userid AND cm.cohortid = ?
                   ORDER BY lastname ASC, firstname ASC";
-            $cohortmembers = $DB->get_records_sql($sql, [$cohort->id]);
+            $cohortmembers = $DB->get_records_sql($sql, array($cohort->id));
             $members = array_merge($members, $cohortmembers);
         }
     }
@@ -213,6 +203,7 @@ function logstore_xapi_get_event_names_array() {
         global $CFG;
 
         require_once($CFG->dirroot . '/admin/tool/log/store/xapi/src/transformer/get_event_function_map.php');
+        require_once($CFG->dirroot . '/admin/tool/log/store/xapi/src/transformer/utils/event_functions/event_functions.php');
     }
 
     $eventnames = [];
@@ -278,10 +269,10 @@ function logstore_xapi_get_info_string($row) {
  * @return array
  */
 function logstore_xapi_get_successful_events($events) {
-    $loadedevents = array_filter($events, function ($loadedevent) {
+    $loadedevents = array_filter($events, function($loadedevent) {
         return $loadedevent['loaded'] === true;
     });
-    $successfulevents = array_map(function ($loadedevent) {
+    $successfulevents = array_map(function($loadedevent) {
         return $loadedevent['event'];
     }, $loadedevents);
     return $successfulevents;
@@ -291,7 +282,6 @@ function logstore_xapi_get_successful_events($events) {
  * Take event data and add to the sent log if it doesn't exist already.
  *
  * @param stdObj $event raw event data
- * @return void
  */
 function logstore_xapi_add_event_to_sent_log($event) {
     global $DB;
@@ -317,7 +307,7 @@ function logstore_xapi_add_event_to_sent_log($event) {
 function logstore_xapi_extract_events($limitnum, $log, $type) {
     global $DB;
 
-    $conditions = ["type" => $type];
+    $conditions = array("type" => $type);
     $sort = '';
     $fields = '*';
     $limitfrom = 0;
@@ -342,7 +332,6 @@ function logstore_xapi_get_event_ids($loadedevents) {
  * Delete processed events.
  *
  * @param array $events raw events data
- * @return void
  */
 function logstore_xapi_delete_processed_events($events) {
     global $DB;
@@ -354,7 +343,6 @@ function logstore_xapi_delete_processed_events($events) {
  * Log the number of events using mtrace.
  *
  * @param array $events raw events data
- * @return void
  */
 function logstore_xapi_record_successful_events($events) {
     mtrace(count(logstore_xapi_get_successful_events($events)) . " " . get_string('successful_events', 'logstore_xapi'));
@@ -364,7 +352,6 @@ function logstore_xapi_record_successful_events($events) {
  * Take successful events and save each using logstore_xapi_add_event_to_sent_log.
  *
  * @param array $events raw events data
- * @return void
  */
 function logstore_xapi_save_sent_events(array $events) {
     $successfulevents = logstore_xapi_get_successful_events($events);

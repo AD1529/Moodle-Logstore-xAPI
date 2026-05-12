@@ -34,12 +34,20 @@ if ($hassiteconfig) {
     $settings->add(new admin_setting_configtext('logstore_xapi/endpoint',
         get_string('endpoint', 'logstore_xapi'), '',
         'http://example.com/endpoint/location/', PARAM_URL));
-    // Username.
+    // User name or client ID
     $settings->add(new admin_setting_configtext('logstore_xapi/username',
         get_string('username', 'logstore_xapi'), '', 'username', PARAM_TEXT));
-    // Key or password.
+    // User password or client secret
     $settings->add(new admin_setting_configtext('logstore_xapi/password',
         get_string('password', 'logstore_xapi'), '', 'password', PARAM_TEXT));
+
+    // OAuth2, Client Credentials flow
+    $settings->add(new admin_setting_configcheckbox('logstore_xapi/oauth2_enabled',
+        get_string('oauth2_enabled', 'logstore_xapi'),
+        get_string('oauth2_enabled_desc', 'logstore_xapi'), 1));
+    $settings->add(new admin_setting_configtext('logstore_xapi/oauth2_token_endpoint',
+        get_string('oauth2_token_endpoint', 'logstore_xapi'), '',
+        'https://auth.example.com/oauth/token', PARAM_URL));
 
     // Switch background batch mode on.
     $settings->add(new admin_setting_configcheckbox('logstore_xapi/backgroundmode',
